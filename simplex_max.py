@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
-
-This is a temporary script file.
+Diego Oliveira de Lemos
 """
 import numpy as np
  #gerar matriz com linhas suficientes para cada restrição e função obejtivo
@@ -18,7 +16,7 @@ matriz[2][:] = [1,-10,-8,-1,0,0,0] # f objetivo
 #matriz = gerar_matriz(2, 2)
 #matriz[0][:] =[0, 3, 6, 1, 0, 10]
 #matriz[1][:] =[0, 3, 3, 0, 1, 8]
-#matriz[2][:] =[1, -30,-48, 0, 0, 0]
+#matriz[2][:] =[1, -30,-48, 0, 0, 0] # f objetivo
 
 def coluna_pivo(matriz):
     r = len(matriz[:,0])
@@ -37,8 +35,8 @@ def linha_pivo(matriz):
             if b/i>0:
                 temp.append(b/i)
                 #print(b/i)
-            else:                
-                temp.append(10000)
+            #else:                
+                #temp.append(10000)
         indice = temp.index(min(temp))
         return indice
     
@@ -53,23 +51,35 @@ while coluna_pivo(matriz)!=False:
     matriz[linha][:]= (matriz[linha][:])/matriz[linha][coluna] #atualizei a linha pivo
     pivo = matriz[linha][coluna]
 
-    numrows = len(matriz) 
-    numcols = len(matriz[0])
+    numlinhas = len(matriz) 
+    numcolunas = len(matriz[0])
  
-    for i in range (numrows):
+    for i in range (numlinhas):
         n = -(matriz[i][coluna])/pivo
         print (n)
-        for j in range (numcols):
+        for j in range (numcolunas):
             if i!=(linha):
                 matriz[i][j] =  matriz[linha][j]*n + matriz[i][j]
     
-    print(matriz)   
+    #print(matriz)   
 
         
         
-    
+resultado_dual =[]  
+matriz = np.round(matriz,2)
+def resultado_simplex(matriz):
+    res_simplex =[]
+    numlinhas = len(matriz) 
+    numcolunas = len(matriz[0])
+    for i in range (numlinhas):
+        for j in range (numcolunas-1):
+            if j>0:
+                if (matriz[i][j]) ==1:
+                    res_simplex.append(matriz[i][numcolunas-1])
+            if ( j==0 and matriz[i][j]==1):
+                res_simplex.append(matriz[i][numcolunas-1])
+    return res_simplex
 
 
-
-
-#print(matriz)   
+print(matriz)
+print(resultado_simplex(matriz))   
