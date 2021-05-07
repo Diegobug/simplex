@@ -12,9 +12,12 @@ controle=[]
 
 p = ["x1","x2","x3","x4","x5","x6","x7","x8","x9","x10","x11","x12","x13","x14","x15","x16","x17"]
 
-problema = "3x1+3x2+2x3<=30;6x1+3x2+0x3<=48;10x1+8x2+1x3"
 
-#problema = "2x1+2x2<=4;1x1+0x2>=1;1x1+1x2==2;2x1+3x2"
+
+
+#problema = "3x1+3x2+2x3<=30;6x1+3x2+0x3<=48;10x1+8x2+1x3"
+
+problema = "2x1+2x2<=4;1x1+0x2>=1;1x1+1x2==2;2x1+3x2"
 temp = problema.split(";")
 for i in range (len(temp)-1):
     if "==" in temp[i]:
@@ -23,6 +26,8 @@ for i in range (len(temp)-1):
         controle.append(EXCESSO)
     elif "<=" in temp[i]:
         controle.append(FOLGA)
+
+
 #gerar matriz com linhas suficientes para cada restrição e função obejtivo       
 def gerar_matriz(var,rest,artif):
     if (artif==0):
@@ -48,8 +53,6 @@ def linha_pivo(matriz):
             if b/i>0:
                 temp.append(b/i)
                 #print(b/i)
-            #else:                
-                #temp.append(10000)
         indice = temp.index(min(temp))
         return indice
     
@@ -74,7 +77,7 @@ def simplex(matriz):
                     matriz[i][j] =  matriz[linha][j]*n + matriz[i][j]
     return matriz  
 
-def fase2_simplex(matriz, n_artif, l):    
+def fase2_simplex(matriz, n_artif, l,n_var):    
 #minimizar as variaveis artificiais (zerar)
     print(l)
     numlinhas = len(matriz) 
@@ -90,16 +93,16 @@ def fase2_simplex(matriz, n_artif, l):
     for i in range(len(l)):
         matriz = np.delete(matriz,numcolunas-3,1)
 #chama o simplex novamente       
-    return resultado_simplex(simplex(matriz))
+    return resultado_simplex(simplex(matriz),n_var)
 
-def resultado_simplex(matriz):
+def resultado_simplex(matriz,n_var):
     matriz = np.round(matriz,2)
     res_simplex =[]
     numlinhas = len(matriz) 
     numcolunas = len(matriz[0])
     for i in range (numlinhas): 
         for j in range (numcolunas-1):
-            if j>0 and j < numcolunas-2: #consertar
+            if j>0 and j <=n_var: 
                 if (matriz[i][j]) ==1:
                     res_simplex.append(matriz[i][numcolunas-1])
             if ( j==0 and matriz[i][j]==1):
@@ -186,9 +189,9 @@ def build_matriz(problema): #linha 113 à 140 é só ajustes
                     nova_matriz[i][j]=matriz[i][j]
                 else:
                     nova_matriz[i][j]=vet_artif[j]
-        print(linha_artificializada[1:])
+        #print(linha_artificializada[1:])
 
-        print(fase2_simplex(nova_matriz,n_artif,linha_artificial))
+        print(fase2_simplex(nova_matriz,n_artif,linha_artificial,n_var))
         
         
     else: #simplex normal
@@ -214,7 +217,7 @@ def build_matriz(problema): #linha 113 à 140 é só ajustes
                     else:
                         matriz[i][j] = float(lista.pop(0))
         print(matriz)
-        return resultado_simplex(simplex(matriz))
+        return resultado_simplex(simplex(matriz),n_var)
           
         
 resultado_dual = []  
